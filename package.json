@@ -1,0 +1,8 @@
+{
+  "name": "test-devops-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:wearevolt/test-devops-app.git",
+  "author": "Viacheslav Voytovich <voytovich.slava@gmail.com>",
+  "license": "MIT"
+}
