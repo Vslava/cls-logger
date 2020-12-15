@@ -2,7 +2,9 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 
-const listenPort = process.env.PORT;
+const settings = require('./config/settings');
+
+const listenPort = settings.PORT;
 const staticPath = path.join(__dirname, '..', 'static');
 const indexFile = 'index.html';
 
