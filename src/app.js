@@ -1,34 +1,27 @@
-const express = require('express');
-const fs = require('fs');
 const path = require('path');
+const express = require('express');
+const handlebars = require('express-handlebars')
 
 const settings = require('./config/settings');
 
-const listenPort = settings.PORT;
-const staticPath = path.join(__dirname, '..', 'static');
-const indexFile = 'index.html';
+const { getRoot } = require('./routes');
 
 const app = express();
 
-app.use(express.static(
-  staticPath,
-  { index: false },
-));
+app.engine(
+  '.hbs',
+  handlebars({
+    defaultLayout: false,
+    extname: '.hbs',
+  }),
+);
 
-app.get('*', (req, res, next) => {
-  fs.readFile(
-    path.join(staticPath, indexFile),
-    'utf8',
-    (err, data) => {
-      if (err) {
-        return next(404);
-      }
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', '.hbs');
 
-      res.contentType('text/html');
-      res.send(data);
-    },
-  );
-});
+app.get('/', getRoot);
+
+const listenPort = settings.PORT;
 
 app.listen({ host: '0.0.0.0', port: listenPort }, () => {
   console.log(`Server ready at http://0.0.0.0:${listenPort}`);
