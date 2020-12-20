@@ -1,15 +1,21 @@
 version: 2.1
 orbs:
   heroku: circleci/heroku@1.2.3
+jobs:
+  deploy_project:
+    docker:
+      - image: buildpack-deps:trusty
+    steps:
+      - checkout
+      - heroku/install
+      - heroku/deploy-via-git:
+          force: true
+          branch: master
+      - run:
+          name: "Apply migrations"
+          command: |
+            heroku run --app $HEROKU_APP_NAME yarn db:migrate
 workflows:
   heroku_deploy:
     jobs:
-      - heroku/deploy-via-git:
-          post-steps:
-            - run:
-                name: "Apply migrations"
-                command: |
-                  heroku run yarn db:migrate
-          filters:
-            branches:
-              only: master
+      - deploy_project
