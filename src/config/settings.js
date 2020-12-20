@@ -1,4 +1,4 @@
-require('../util/init-dotenv');
+require('./init-dotenv');
 
 const PORT = (process.env.PORT || 5000);
 const DATABASE_URL = process.env.DATABASE_URL;
