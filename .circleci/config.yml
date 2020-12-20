@@ -5,6 +5,11 @@ workflows:
   heroku_deploy:
     jobs:
       - heroku/deploy-via-git:
+          post-steps:
+            - run:
+                name: "Apply migrations"
+                command: |
+                  heroku run yarn db:migrate
           filters:
             branches:
               only: master
