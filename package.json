@@ -11,6 +11,7 @@
   },
   "scripts": {
     "start": "node ./src/app.js",
+    "test": "NODE_ENV=test npx mocha --exit --recursive ./test/",
     "db:create": "npx sequelize db:create",
     "db:migrate": "npx sequelize db:migrate",
     "db:seed": "npx sequelize db:seed:all"
@@ -27,6 +28,8 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "dotenv": "^8.2.0",
-    "mocha": "^8.2.1"
+    "factory-bot": "^6.2.0",
+    "mocha": "^8.2.1",
+    "supertest": "^6.0.1"
   }
 }

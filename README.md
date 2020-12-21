@@ -1,5 +1,9 @@
 # test-devops-page
 
+## TODO
+
+- setup qa and production in CircleCI
+
 ## Environment variables
 
 - PORT - a port which the app listens on
