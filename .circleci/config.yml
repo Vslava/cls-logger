@@ -2,20 +2,68 @@ version: 2.1
 orbs:
   heroku: circleci/heroku@1.2.3
 jobs:
+  test_project:
+    docker:
+      - image: circleci/node:14.13.1
+        environment:
+          NODE_ENV: test
+          DATABASE_URL: postgres://postgres:pg_password@127.0.0.1:5432/ci_test
+
+      - image: circleci/postgres:12.5
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
+          POSTGRES_PASSWORD: "pg_password"
+
+    working_directory: ~/app
+
+    steps:
+      - checkout
+      - run:
+          name: Install packages
+          command: |
+            yarn install
+      - run:
+          name: Create database
+          command: |
+            yarn db:create
+      - run:
+          name: Apply migrations
+          command: |
+            yarn db:migrate
+      - run:
+          name: Run tests
+          no_output_timeout: 10m
+          command: |
+            yarn test
+
   deploy_project:
     docker:
       - image: buildpack-deps:trusty
     steps:
       - checkout
       - heroku/install
+      - run:
+          name: "Create release branch"
+          command:
+            git checkout -b circleci-release-branch
       - heroku/deploy-via-git:
           force: true
-          branch: master
+          branch: circleci-release-branch
       - run:
           name: "Apply migrations"
           command: |
             heroku run --app $HEROKU_APP_NAME yarn db:migrate
+
 workflows:
   heroku_deploy:
     jobs:
-      - deploy_project
+      - test_project:
+          filters: &test_project_filters
+            branches:
+              only: master
+
+      - deploy_project:
+          requires:
+            - test_project
+          filters: *test_project_filters
