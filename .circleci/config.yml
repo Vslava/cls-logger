@@ -66,12 +66,10 @@ jobs:
 workflows:
   heroku_deploy:
     jobs:
-      - test_project:
-          filters: &test_project_filters
-            branches:
-              only: master
-
+      - test_project
       - deploy_project:
           requires:
             - test_project
-          filters: *test_project_filters
+          filters:
+            branches:
+              only: master
