@@ -72,6 +72,9 @@ jobs:
 workflows:
   build_and_deploy_to_qa:
     jobs:
+      # this test is used for all branches except production
+      # because a filter for branches inherited from a specific branch
+      # cannot be created
       - test_project:
           filters:
             branches:
@@ -84,6 +87,7 @@ workflows:
             branches:
               only: master
 
+  # this workflow was created for only production branch
   build_and_deploy_to_production:
     jobs:
       - test_project:
