@@ -45,7 +45,7 @@ jobs:
           command: |
             yarn test
 
-  deploy_project:
+  deploy_project: &deploy_project
     docker:
       - image: buildpack-deps:trusty
     steps:
@@ -63,13 +63,31 @@ jobs:
           command: |
             heroku run --app $HEROKU_APP_NAME yarn db:migrate
 
+  deploy_to_qa:
+    <<: *deploy_project
+
+  deploy_to_production:
+    <<: *deploy_project
+
 workflows:
-  heroku_deploy:
+  build_and_deploy_to_qa:
     jobs:
       - test_project
-      - deploy_project:
+      - deploy_to_qa:
           requires:
             - test_project
+          context: CIRCLECI_TEST_BACKEND_QA_DEPLOY
           filters:
             branches:
               only: master
+
+  build_and_deploy_to_production:
+    jobs:
+      - test_project
+      - deploy_to_production:
+          requires:
+            - test_project
+          context: CIRCLECI_TEST_BACKEND_PRODUCTION_DEPLOY
+          filters:
+            branches:
+              only: production
