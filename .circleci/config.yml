@@ -72,7 +72,10 @@ jobs:
 workflows:
   build_and_deploy_to_qa:
     jobs:
-      - test_project
+      - test_project:
+          filters:
+            branches:
+              ignore: /^production$/
       - deploy_to_qa:
           requires:
             - test_project
@@ -83,11 +86,12 @@ workflows:
 
   build_and_deploy_to_production:
     jobs:
-      - test_project
+      - test_project:
+          filters: &test_to_production_filter
+            branches:
+              only: production
       - deploy_to_production:
           requires:
             - test_project
           context: CIRCLECI_TEST_BACKEND_PRODUCTION_DEPLOY
-          filters:
-            branches:
-              only: production
+          filters: *test_to_production_filter
